@@ -1,18 +1,18 @@
-// Abstract Room class
+import java.util.HashMap;
+
+// Version 4.1 - Refactored Room class
 abstract class Room {
 
     protected int beds;
     protected int size;
     protected double price;
 
-    // Constructor
     public Room(int beds, int size, double price) {
         this.beds = beds;
         this.size = size;
         this.price = price;
     }
 
-    // Getter methods
     public int getBeds() {
         return beds;
     }
@@ -27,66 +27,101 @@ abstract class Room {
 }
 
 
-// Single Room class
+// Version 4.1
 class SingleRoom extends Room {
-
     public SingleRoom() {
         super(1, 250, 1500.0);
     }
 }
 
 
-// Double Room class
+// Version 4.1
 class DoubleRoom extends Room {
-
     public DoubleRoom() {
         super(2, 400, 2500.0);
     }
 }
 
 
-// Suite Room class
+// Version 4.1
 class SuiteRoom extends Room {
-
     public SuiteRoom() {
         super(3, 750, 5000.0);
     }
 }
 
 
-// Main Application class
+// Version 4.1 - Inventory (State Holder)
+class RoomInventory {
+
+    private HashMap<String, Integer> inventory;
+
+    public RoomInventory() {
+
+        inventory = new HashMap<>();
+
+        inventory.put("Single Room", 5);
+        inventory.put("Double Room", 3);
+        inventory.put("Suite Room", 2);
+    }
+
+    // Read-only access
+    public int getAvailability(String roomType) {
+        return inventory.getOrDefault(roomType, 0);
+    }
+}
+
+
+// Version 4.0 - New Search Service
+class RoomSearchService {
+
+    public void searchRooms(Room single, Room dbl, Room suite, RoomInventory inventory) {
+
+        System.out.println("Room Search\n");
+
+        if (inventory.getAvailability("Single Room") > 0) {
+
+            System.out.println("Single Room:");
+            System.out.println("Beds: " + single.getBeds());
+            System.out.println("Size: " + single.getSize() + " sqft");
+            System.out.println("Price per night: " + single.getPrice());
+            System.out.println("Available: " + inventory.getAvailability("Single Room") + "\n");
+        }
+
+        if (inventory.getAvailability("Double Room") > 0) {
+
+            System.out.println("Double Room:");
+            System.out.println("Beds: " + dbl.getBeds());
+            System.out.println("Size: " + dbl.getSize() + " sqft");
+            System.out.println("Price per night: " + dbl.getPrice());
+            System.out.println("Available: " + inventory.getAvailability("Double Room") + "\n");
+        }
+
+        if (inventory.getAvailability("Suite Room") > 0) {
+
+            System.out.println("Suite Room:");
+            System.out.println("Beds: " + suite.getBeds());
+            System.out.println("Size: " + suite.getSize() + " sqft");
+            System.out.println("Price per night: " + suite.getPrice());
+            System.out.println("Available: " + inventory.getAvailability("Suite Room"));
+        }
+    }
+}
+
+
+// Main Application
 public class BookMyStayApp {
 
     public static void main(String[] args) {
 
-        // Create room objects (Polymorphism)
-        Room singleRoom = new SingleRoom();
-        Room doubleRoom = new DoubleRoom();
-        Room suiteRoom = new SuiteRoom();
+        Room single = new SingleRoom();
+        Room dbl = new DoubleRoom();
+        Room suite = new SuiteRoom();
 
-        // Static availability variables
-        int singleAvailability = 5;
-        int doubleAvailability = 3;
-        int suiteAvailability = 2;
+        RoomInventory inventory = new RoomInventory();
 
-        System.out.println("Hotel Room Initialization\n");
+        RoomSearchService searchService = new RoomSearchService();
 
-        System.out.println("Single Room:");
-        System.out.println("Beds: " + singleRoom.getBeds());
-        System.out.println("Size: " + singleRoom.getSize() + " sqft");
-        System.out.println("Price per night: " + singleRoom.getPrice());
-        System.out.println("Available: " + singleAvailability + "\n");
-
-        System.out.println("Double Room:");
-        System.out.println("Beds: " + doubleRoom.getBeds());
-        System.out.println("Size: " + doubleRoom.getSize() + " sqft");
-        System.out.println("Price per night: " + doubleRoom.getPrice());
-        System.out.println("Available: " + doubleAvailability + "\n");
-
-        System.out.println("Suite Room:");
-        System.out.println("Beds: " + suiteRoom.getBeds());
-        System.out.println("Size: " + suiteRoom.getSize() + " sqft");
-        System.out.println("Price per night: " + suiteRoom.getPrice());
-        System.out.println("Available: " + suiteAvailability);
+        searchService.searchRooms(single, dbl, suite, inventory);
     }
 }
