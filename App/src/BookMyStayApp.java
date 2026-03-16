@@ -4,25 +4,17 @@ public class BookMyStayApp {
 
     public static void main(String[] args) {
 
-        System.out.println("Add-On Service Selection");
+        System.out.println("Booking History and Reporting\n");
+        System.out.println("Booking History Report");
 
-        String reservationId = "Single-1";
+        List<String[]> bookingHistory = new ArrayList<>();
 
-        Map<String, List<Double>> addOnServices = new HashMap<>();
+        bookingHistory.add(new String[]{"Abhi", "Single"});
+        bookingHistory.add(new String[]{"Subha", "Double"});
+        bookingHistory.add(new String[]{"Vanmathi", "Suite"});
 
-        List<Double> services = new ArrayList<>();
-        services.add(500.0);
-        services.add(1000.0);
-
-        addOnServices.put(reservationId, services);
-
-        double totalCost = 0;
-
-        for(double cost : addOnServices.get(reservationId)) {
-            totalCost += cost;
+        for (String[] booking : bookingHistory) {
+            System.out.println("Guest: " + booking[0] + ", Room Type: " + booking[1]);
         }
-
-        System.out.println("Reservation ID: " + reservationId);
-        System.out.println("Total Add-On Cost: " + totalCost);
     }
 }
