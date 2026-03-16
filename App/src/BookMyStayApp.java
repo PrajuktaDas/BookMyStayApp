@@ -1,32 +1,48 @@
 import java.util.*;
 
+class BookingProcessor extends Thread {
+
+    private Queue<String> bookingQueue;
+    private static int roomCounter = 1;
+
+    public BookingProcessor(Queue<String> bookingQueue) {
+        this.bookingQueue = bookingQueue;
+    }
+
+    public void run() {
+        processBooking();
+    }
+
+    public synchronized void processBooking() {
+
+        if (!bookingQueue.isEmpty()) {
+
+            String guest = bookingQueue.poll();
+            String roomId = "Room-" + roomCounter++;
+
+            System.out.println("Booking confirmed for Guest: " + guest + ", Room ID: " + roomId);
+        }
+    }
+}
+
 public class BookMyStayApp {
 
     public static void main(String[] args) {
 
-        System.out.println("Booking Cancellation Processing");
+        System.out.println("Concurrent Booking Simulation");
 
-        Map<String, String> reservations = new HashMap<>();
-        reservations.put("Single-1", "Single");
-        reservations.put("Double-1", "Double");
+        Queue<String> bookingQueue = new LinkedList<>();
 
-        Stack<String> rollbackStack = new Stack<>();
+        bookingQueue.add("Abhi");
+        bookingQueue.add("Subha");
+        bookingQueue.add("Vanmathi");
 
-        String reservationId = "Single-1";
+        BookingProcessor t1 = new BookingProcessor(bookingQueue);
+        BookingProcessor t2 = new BookingProcessor(bookingQueue);
+        BookingProcessor t3 = new BookingProcessor(bookingQueue);
 
-        if (reservations.containsKey(reservationId)) {
-
-            rollbackStack.push(reservationId);
-
-            String roomType = reservations.remove(reservationId);
-
-            System.out.println("Booking cancelled for Reservation ID: " + reservationId);
-            System.out.println("Room type restored to inventory: " + roomType);
-
-        } else {
-            System.out.println("Cancellation failed: Reservation does not exist.");
-        }
-
-        System.out.println("Rollback Stack: " + rollbackStack);
+        t1.start();
+        t2.start();
+        t3.start();
     }
 }
