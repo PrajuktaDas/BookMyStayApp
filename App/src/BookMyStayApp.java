@@ -1,27 +1,13 @@
+import java.io.*;
 import java.util.*;
 
-class BookingProcessor extends Thread {
+class Reservation implements Serializable {
+    String guestName;
+    String roomType;
 
-    private Queue<String> bookingQueue;
-    private static int roomCounter = 1;
-
-    public BookingProcessor(Queue<String> bookingQueue) {
-        this.bookingQueue = bookingQueue;
-    }
-
-    public void run() {
-        processBooking();
-    }
-
-    public synchronized void processBooking() {
-
-        if (!bookingQueue.isEmpty()) {
-
-            String guest = bookingQueue.poll();
-            String roomId = "Room-" + roomCounter++;
-
-            System.out.println("Booking confirmed for Guest: " + guest + ", Room ID: " + roomId);
-        }
+    Reservation(String guestName, String roomType) {
+        this.guestName = guestName;
+        this.roomType = roomType;
     }
 }
 
@@ -29,20 +15,35 @@ public class BookMyStayApp {
 
     public static void main(String[] args) {
 
-        System.out.println("Concurrent Booking Simulation");
+        String fileName = "bookingData.ser";
+        List<Reservation> bookingHistory = new ArrayList<>();
 
-        Queue<String> bookingQueue = new LinkedList<>();
+        bookingHistory.add(new Reservation("Abhi", "Single"));
+        bookingHistory.add(new Reservation("Subha", "Double"));
+        bookingHistory.add(new Reservation("Vanmathi", "Suite"));
 
-        bookingQueue.add("Abhi");
-        bookingQueue.add("Subha");
-        bookingQueue.add("Vanmathi");
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+            out.writeObject(bookingHistory);
+            out.close();
+            System.out.println("Booking data saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Error saving booking data.");
+        }
 
-        BookingProcessor t1 = new BookingProcessor(bookingQueue);
-        BookingProcessor t2 = new BookingProcessor(bookingQueue);
-        BookingProcessor t3 = new BookingProcessor(bookingQueue);
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
+            List<Reservation> recoveredData = (List<Reservation>) in.readObject();
+            in.close();
 
-        t1.start();
-        t2.start();
-        t3.start();
+            System.out.println("Recovered Booking Data:");
+
+            for (Reservation r : recoveredData) {
+                System.out.println("Guest: " + r.guestName + ", Room Type: " + r.roomType);
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("No previous booking data found.");
+        }
     }
 }
