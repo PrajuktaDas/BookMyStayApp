@@ -4,31 +4,25 @@ public class BookMyStayApp {
 
     public static void main(String[] args) {
 
-        System.out.println("Room Allocation Processing");
+        System.out.println("Add-On Service Selection");
 
-        Queue<String[]> bookingQueue = new LinkedList<>();
+        String reservationId = "Single-1";
 
-        bookingQueue.add(new String[]{"Abhi", "Single"});
-        bookingQueue.add(new String[]{"Subha", "Single"});
-        bookingQueue.add(new String[]{"Vanmathi", "Suite"});
+        Map<String, List<Double>> addOnServices = new HashMap<>();
 
-        Map<String, Set<String>> allocatedRooms = new HashMap<>();
+        List<Double> services = new ArrayList<>();
+        services.add(500.0);
+        services.add(1000.0);
 
-        while (!bookingQueue.isEmpty()) {
+        addOnServices.put(reservationId, services);
 
-            String[] request = bookingQueue.poll();
-            String guestName = request[0];
-            String roomType = request[1];
+        double totalCost = 0;
 
-            allocatedRooms.putIfAbsent(roomType, new HashSet<>());
-
-            Set<String> rooms = allocatedRooms.get(roomType);
-
-            String roomId = roomType + "-" + (rooms.size() + 1);
-
-            rooms.add(roomId);
-
-            System.out.println("Booking confirmed for Guest: " + guestName + ", Room ID: " + roomId);
+        for(double cost : addOnServices.get(reservationId)) {
+            totalCost += cost;
         }
+
+        System.out.println("Reservation ID: " + reservationId);
+        System.out.println("Total Add-On Cost: " + totalCost);
     }
 }
