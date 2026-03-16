@@ -1,39 +1,32 @@
-import java.util.Scanner;
-
-class InvalidRoomTypeException extends Exception {
-    public InvalidRoomTypeException(String message) {
-        super(message);
-    }
-}
+import java.util.*;
 
 public class BookMyStayApp {
 
-    public static void validateRoomType(String roomType) throws InvalidRoomTypeException {
-        if (!roomType.equals("Single") && !roomType.equals("Double") && !roomType.equals("Suite")) {
-            throw new InvalidRoomTypeException("Booking failed: Invalid room type selected.");
-        }
-    }
-
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
+        System.out.println("Booking Cancellation Processing");
 
-        System.out.println("Booking Validation");
+        Map<String, String> reservations = new HashMap<>();
+        reservations.put("Single-1", "Single");
+        reservations.put("Double-1", "Double");
 
-        System.out.print("Enter guest name: ");
-        String guestName = sc.nextLine();
+        Stack<String> rollbackStack = new Stack<>();
 
-        System.out.print("Enter room type (Single/Double/Suite): ");
-        String roomType = sc.nextLine();
+        String reservationId = "Single-1";
 
-        try {
-            validateRoomType(roomType);
-            System.out.println("Booking confirmed for " + guestName + " with room type " + roomType);
+        if (reservations.containsKey(reservationId)) {
+
+            rollbackStack.push(reservationId);
+
+            String roomType = reservations.remove(reservationId);
+
+            System.out.println("Booking cancelled for Reservation ID: " + reservationId);
+            System.out.println("Room type restored to inventory: " + roomType);
+
+        } else {
+            System.out.println("Cancellation failed: Reservation does not exist.");
         }
-        catch (InvalidRoomTypeException e) {
-            System.out.println(e.getMessage());
-        }
 
-        sc.close();
+        System.out.println("Rollback Stack: " + rollbackStack);
     }
 }
